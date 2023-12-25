@@ -16,7 +16,6 @@ class User
         $this->username = $username;
         $this->id = $id;
         $this->role = $role;
-        $this->conn = $conn;
         $this->erreur_nom = "";
         $this->erreur_prenom = "";
         $this->erreur_email = "";
@@ -87,7 +86,8 @@ class User
         $this->validateForm($nom, $prenom, $email, $mot_de_passe);
 
         if (empty($this->erreur_nom) && empty($this->erreur_prenom) && empty($this->erreur_email) && empty($this->erreur_mot_de_passe)) {
-            $this->insertUser($nom, $prenom, $email, $mot_de_passe);
+            $hashedPassword = password_hash($mot_de_passe, PASSWORD_DEFAULT);
+            $this->insertUser($nom, $prenom, $email, $hashedPassword);
             header("Location: validation.php");
             exit();
         }
@@ -135,7 +135,7 @@ class User
         }
     }
 
-    public function validateMotDePasse($mot_de_passe)
+    private function validateMotDePasse($mot_de_passe)
     {
         $pattern_mot_de_passe = '/^.{8,}$/';
 
@@ -144,10 +144,12 @@ class User
         }
     }
 
-    public function insertUser($nom, $prenom, $email, $mot_de_passe)
+    private function insertUser($nom, $prenom, $email, $mot_de_passe)
     {
-        $requete = "INSERT INTO users (last_name, first_name, email, password) VALUES ('$nom', '$prenom', '$email', '$mot_de_passe')";
-        $query = mysqli_query($this->conn, $requete);
+        $stmt = $this->conn->prepare("INSERT INTO users (last_name, first_name, email, password) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $nom, $prenom, $email, $mot_de_passe);
+        $stmt->execute();
+        $stmt->close();
     }
     public function redirect($location)
     {

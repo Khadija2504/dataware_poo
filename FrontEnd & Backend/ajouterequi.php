@@ -9,7 +9,7 @@ $membre= $_SESSION['id'];
 $scrumMaster = new ScrumMaster($conn, $user, $membre);
 $scrumMaster->verifierAutorisation();
 if (isset($_POST["submit"])) {
-    $nom = $_POST["name"];
+    $name = $_POST["name"];
     $dated = $_POST["dated"];
 
     $scrumMaster->ajouterEquipe($name,$dated,$membre);

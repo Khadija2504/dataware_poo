@@ -1,14 +1,15 @@
 <?php
+
+include "connexion.php";
+include "../src/ProductOwner.php";
+
 session_start();
 if ($_SESSION['autoriser'] != "oui") {
     header("Location: index.php");
     exit();
 }
 
-include "connexion.php";
-include "../src/modifier-role.php";
-
-$userManager = new UserManager($conn);
+$modifierRole = new ProductOwner($conn, $_SESSION['username']);
 
 $id = $_GET['id'];
 $req = mysqli_query($conn, "SELECT * FROM users WHERE id_user= $id");
@@ -16,7 +17,7 @@ $row = mysqli_fetch_array($req);
 
 if (isset($_POST["submit"])) {
     $role = $_POST["role"];
-    if ($userManager->updateUserRole($id, $role)) {
+    if ($modifierRole->updateUserRole($id, $role)) {
         header("Location: MembreP.php");
     }
 }

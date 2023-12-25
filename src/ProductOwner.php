@@ -254,6 +254,12 @@ class ProductOwner
         $query = mysqli_query($this->conn, "DELETE FROM projets WHERE id_projets=$id");
         return $query;
     }
+    public function updateUserRole($id, $role)
+    {
+        $requete = "UPDATE users SET role ='$role' WHERE id_user=$id";
+        $query = mysqli_query($this->conn, $requete);
+        return $query;
+    }
     
 }
 ?>
